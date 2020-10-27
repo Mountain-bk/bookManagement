@@ -2,7 +2,7 @@
 蔵書管理アプリ
 
 ## Installation
-Python 3.8.5<br>
+Python 3.7.9<br>
 Django 2.2.12
 
 ## Usage and Function
