@@ -78,8 +78,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'booktask', 
-        'USER': 'ryo', 
-        'PASSWORD': 'password', 
+        'USER': os.environ.get('DB_USERNAME'), 
+        'PASSWORD': os.environ.get('DB_PASSWORD'), 
         'HOST': 'localhost',
         'PORT': '',
     }
