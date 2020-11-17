@@ -80,7 +80,7 @@ DATABASES = {
         'NAME': 'booktask', 
         'USER': os.environ.get('DB_USERNAME'), 
         'PASSWORD': os.environ.get('DB_PASSWORD'), 
-        'HOST': 'localhost',
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
         'PORT': '',
     }
 }
