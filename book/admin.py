@@ -6,7 +6,7 @@ from .models import Category, Book, Author
 class BookAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'published_date', 'get_categories', 'get_authors')  # 一覧に出したい項目
     list_display_links = ('id', 'title', 'published_date', 'get_categories', 'get_authors')  # 修正リンクでクリックできる項目
-    list_filter = ['categories', 'authors'] # カテゴリー、著者でフィルターをかける
+    list_filter = ['categories__name', 'authors__name'] # カテゴリー、著者でフィルターをかける
 
     def get_categories(self, obj):  # 所属カテゴリーを取得
         return " / ".join([categories.name for categories in obj.categories.all()])
