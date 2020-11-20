@@ -4,15 +4,17 @@ from .models import Category, Book, Author
 # Register your models here.
 
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'published_date', 'get_categories', 'get_authors')  # 一覧に出したい項目
-    list_display_links = ('id', 'title', 'published_date', 'get_categories', 'get_authors')  # 修正リンクでクリックできる項目
+    list_display = ('id', 'title', 'published_date', 'label_category', 'label_author')  # 一覧に出したい項目
+    list_display_links = ('id', 'title', 'published_date', 'label_category', 'label_author')  # 修正リンクでクリックできる項目
     list_filter = ['categories__name', 'authors__name'] # カテゴリー、著者でフィルターをかける
 
-    def get_categories(self, obj):  # 所属カテゴリーを取得
-        return " / ".join([categories.name for categories in obj.categories.all()])
+    def label_category(self, obj):
+        return " / ".join([category.name for category in obj.categories.all()]) # カテゴリーを1つずつ表示
+    label_category.short_description = "Categories" # Indexのラベル指定
 
-    def get_authors(self, obj):  # 著者を取得
-        return " / ".join([author.name for author in obj.authors.all()])
+    def label_author(self, obj):
+        return " / ".join([author.name for author in obj.authors.all()]) # 著者を1人ずつ表示
+    label_author.short_description = "Authors" # Indexのラベル指定
     
 admin.site.register(Book, BookAdmin)
 
