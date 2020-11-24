@@ -33,3 +33,8 @@ def signup_view(request):
     else:
         form = UserCreationForm()
     return render(request, 'book/signup.html', {'form': form})
+
+
+def logout_action(request):
+    logout(request)
+    return redirect('book:home')
