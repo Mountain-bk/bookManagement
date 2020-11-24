@@ -37,3 +37,15 @@ class CategoryForm(forms.ModelForm):
         labels = {
             'name': 'Name'
         }
+
+
+class AuthorForm(forms.ModelForm):
+    class Meta:
+        model = Author
+        fields = [
+            'name'
+        ]
+
+        labels = {
+            'name': 'Name'
+        }
