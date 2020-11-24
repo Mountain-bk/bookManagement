@@ -78,3 +78,16 @@ def book_register_view(request):
     else:
         form = BookForm()
     return render(request, 'book/book_register.html', {'form': form})
+
+
+def book_edit_view(request, id):
+    book = Book.objects.get(id=id)
+    if request.method == 'POST':
+        form = BookForm(request.POST, instance=book)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Update submission succesfull')
+            return redirect('book:book detail', id=id)
+    else:
+        form = BookForm(instance=book)
+    return render(request, 'book/book_edit.html', dict(form=form, id=id))
