@@ -91,3 +91,8 @@ def book_edit_view(request, id):
     else:
         form = BookForm(instance=book)
     return render(request, 'book/book_edit.html', dict(form=form, id=id))
+
+
+def book_detail_view(request, id):
+    book = Book.objects.get(id=id)
+    return render(request, 'book/book_detail.html', {'book': book})
