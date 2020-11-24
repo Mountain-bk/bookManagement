@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .models import Category
 from .forms import CategoryForm
+from django.contrib import messages
 
 # Create your views here.
 def home_page(request):
