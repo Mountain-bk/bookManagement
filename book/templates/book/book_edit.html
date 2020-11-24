@@ -1,0 +1,24 @@
+{% extends "./base.html" %}
+{% load static %}
+
+{% block content %}
+<h1 class='title'>Book Edit</h1>
+<form method="POST">
+    <fieldset>
+        <legend>Book Editor</legend>
+        {% csrf_token %}
+        {% for field in form %}
+        <div>
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.name == "categories" %}
+            <p><a href="{% url 'book:category register' %}">Add Category from here</a></p>
+            {% elif field.name == "authors" %}
+            <p><a href="{% url 'book:author register' %}">Add Author from here</a></p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </fieldset>
+    <button type="submit">Update</button>
+</form>
+{% endblock content %}
