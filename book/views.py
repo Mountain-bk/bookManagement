@@ -45,3 +45,24 @@ def mypage_view(request):
         return render(request, 'book/mypage.html')
     else:
         return redirect('book:login')
+
+
+def book_shelf_view(request):
+    books = Book.objects.all()
+    categories = Category.objects.all()
+    authors = Author.objects.all()
+    title_contains_book = request.GET.get('title_contains')
+    category = request.GET.get('category')
+    author = request.GET.get('author')
+    if title_contains_book != '' and title_contains_book is not None:
+        books = books.filter(title__icontains=title_contains_book)
+    if category != '' and category is not None and category != 'Choose...':
+        books = books.filter(categories__name=category)
+    if author != '' and author is not None and author != 'Choose...':
+        books = books.filter(authors__name=author)
+    context = {
+        'books': books,
+        'categories': categories,
+        'authors': authors
+    }
+    return render(request, 'book/book_shelf.html', context)
