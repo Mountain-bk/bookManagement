@@ -24,3 +24,15 @@ def author_edit_view(request, id):
     else:
         form = AuthorForm(instance=author)
     return render(request, 'book/author_edit.html', dict(form=form, id=id))
+
+
+def author_register_view(request):
+    if request.method == "POST":
+        form = AuthorForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Form submission successful')
+            return redirect('book:author register')
+    else:
+        form = AuthorForm()
+    return render(request, 'book/author_register.html', {'form': form})
