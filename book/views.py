@@ -35,3 +35,12 @@ def category_register_view(request):
     else:
         form = CategoryForm()
     return render(request, 'book/category_register.html', {'form': form})
+
+
+def category_delete_view(request, id):
+    category = Category.objects.get(id=id)
+    if request.method == 'POST':
+        category.delete()
+        messages.success(request, 'Form submission successful')
+        return redirect('book:category')
+    return render(request, 'book/category_delete.html', {'category': category})
