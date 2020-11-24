@@ -19,6 +19,7 @@
             {% endfor %}
     </ul>
     {% endif %}
+    <a href="{% url 'book:category register' %}">Add Category</a>
     <table>
         <thead>
             <tr>
@@ -29,6 +30,8 @@
             {% for category in categories %}
             <tr>
                 <th>{{ category.name }}</th>
+                <th> <a href="{% url 'book:category edit' category.id %}"><span>Edit</span></a></th>
+                <th> <a href="{% url 'book:category delete' category.id %}"><span>Delete</span></a></th>
             </tr>
             {% endfor %}
         </tbody>
