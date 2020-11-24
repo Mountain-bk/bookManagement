@@ -38,3 +38,10 @@ def signup_view(request):
 def logout_action(request):
     logout(request)
     return redirect('book:home')
+
+
+def mypage_view(request):
+    if request.user.is_authenticated:
+        return render(request, 'book/mypage.html')
+    else:
+        return redirect('book:login')
