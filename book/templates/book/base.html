@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'book/styles.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+    <title>Book Manager</title>
+</head>
+
+<body>
+    <nav>
+        <form action="{% url 'book:home' %}" method="post">
+            {% csrf_token %}
+            <button class="btn btn-primary btn-sm" type="submit">Home</button>
+        </form>
+        <form action="{% url 'book:mypage' %}" method="post">
+            {% csrf_token %}
+            <button class="btn btn-primary btn-sm" type="submit">My Page</button>
+        </form>
+        {% if user.is_authenticated %}
+        <form action="{% url 'book:logout' %}" method="post">
+            {% csrf_token %}
+            <button class="btn btn-primary btn-sm" type="submit">Log Out</button>
+        </form>
+        {% endif %}
+    </nav>
+    {% block content %}
+
+    {% endblock content %}
+</body>
+
+</html>
