@@ -66,3 +66,15 @@ def book_shelf_view(request):
         'authors': authors
     }
     return render(request, 'book/book_shelf.html', context)
+
+
+def book_register_view(request):
+    if request.method == "POST":
+        form = BookForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Form submission successful')
+            return redirect('book:book register')
+    else:
+        form = BookForm()
+    return render(request, 'book/book_register.html', {'form': form})
