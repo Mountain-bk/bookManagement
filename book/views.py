@@ -123,3 +123,15 @@ def category_edit_view(request, id):
     else:
         form = CategoryForm(instance=category)
     return render(request, 'book/category_edit.html', dict(form=form, id=id))
+
+
+def category_register_view(request):
+    if request.method == "POST":
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Form submission successful')
+            return redirect('book:category register')
+    else:
+        form = CategoryForm()
+    return render(request, 'book/category_register.html', {'form': form})
