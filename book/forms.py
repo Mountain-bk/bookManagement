@@ -25,3 +25,15 @@ class BookForm(forms.ModelForm):
             'categories': 'Category',
             'authors': 'Author'
         }
+
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = [
+            'name'
+        ]
+
+        labels = {
+            'name': 'Name'
+        }
