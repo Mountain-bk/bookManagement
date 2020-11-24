@@ -21,3 +21,15 @@ def login_view(request):
     else:
         form = AuthenticationForm()
     return render(request, 'book/login.html', {'form': form})
+
+
+def signup_view(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('book:mypage')
+    else:
+        form = UserCreationForm()
+    return render(request, 'book/signup.html', {'form': form})
