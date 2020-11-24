@@ -18,4 +18,5 @@ urlpatterns = [
     path('category-register/', views.category_register_view, name='category register'),
     path('category-delete/<int:id>', views.category_delete_view, name='category delete'),
     path('author/', views.author_view, name='author'),
+    path('author-edit/<int:id>', views.author_edit_view, name='author edit'),
 ]
