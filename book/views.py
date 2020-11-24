@@ -36,3 +36,12 @@ def author_register_view(request):
     else:
         form = AuthorForm()
     return render(request, 'book/author_register.html', {'form': form})
+
+
+def author_delete_view(request, id):
+    author = Author.objects.get(id=id)
+    if request.method == 'POST':
+        author.delete()
+        messages.success(request, 'Form submission successful')
+        return redirect('book:author')
+    return render(request, 'book/author_delete.html', {'author': author})
