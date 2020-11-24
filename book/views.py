@@ -96,3 +96,12 @@ def book_edit_view(request, id):
 def book_detail_view(request, id):
     book = Book.objects.get(id=id)
     return render(request, 'book/book_detail.html', {'book': book})
+
+
+def book_delete_view(request, id):
+    book = Book.objects.get(id=id)
+    if request.method == 'POST':
+        book.delete()
+        messages.success(request, 'Form submission successful')
+        return redirect('book:bookshelf')
+    return render(request, 'book/book_delete.html', {'book': book})
