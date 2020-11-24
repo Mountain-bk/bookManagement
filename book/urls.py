@@ -5,4 +5,5 @@ app_name = 'book'
 urlpatterns = [
     path('', views.home_page, name='home'),
     path('login/', views.login_view, name='login'),
+    path('signup/', views.signup_view, name='signup'),
 ]
