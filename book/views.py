@@ -9,3 +9,15 @@ from django.contrib import messages
 # Create your views here.
 def home_page(request):
     return render(request, 'book/index.html')
+
+
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('book:mypage')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'book/login.html', {'form': form})
