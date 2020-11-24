@@ -144,3 +144,8 @@ def category_delete_view(request, id):
         messages.success(request, 'Form submission successful')
         return redirect('book:category')
     return render(request, 'book/category_delete.html', {'category': category})
+
+
+def author_view(request):
+    authors = Author.objects.all()
+    return render(request, 'book/author.html', {'authors': authors})
