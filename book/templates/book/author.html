@@ -19,6 +19,7 @@
             {% endfor %}
     </ul>
     {% endif %}
+    <a href="{% url 'book:author register' %}">Add Author</a>
     <table>
         <thead>
             <tr>
@@ -29,6 +30,8 @@
             {% for author in authors %}
             <tr>
                 <th>{{ author.name }}</th>
+                <th> <a href="{% url 'book:author edit' author.id %}"><span>Edit</span></a></th>
+                <th> <a href="{% url 'book:author delete' author.id %}"><span>Delete</span></a></th>
             </tr>
             {% endfor %}
         </tbody>
