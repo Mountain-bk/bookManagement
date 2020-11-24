@@ -10,4 +10,5 @@ urlpatterns = [
     path('mypage/', views.mypage_view, name='mypage'),
     path('book-shelf/', views.book_shelf_view, name='book shelf'),
     path('book-register/', views.book_register_view, name='book register'),
+    path('book-edit/<int:id>', views.book_edit_view, name='book edit'),
 ]
