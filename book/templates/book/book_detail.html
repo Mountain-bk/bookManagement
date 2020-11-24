@@ -1,0 +1,33 @@
+{% extends "./base.html" %}
+{% load static %}
+
+{% block content %}
+<h1 class='title'>Book Detail</h1>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+        {% endfor %}
+</ul>
+{% endif %}
+<table>
+    <tr>
+        <th>Title:</th>
+        <th>{{ book.title }}</th>
+    </tr>
+    <tr>
+        <th>Published Date:</th>
+        <th>{{ book.published_date }}</th>
+    </tr>
+    <tr>
+        <th>Category:</th>
+        <th>{{ book.categories.all|join:", " }}</th>
+    </tr>
+    <tr>
+        <th>Author:</th>
+        <th>{{ book.authors.all|join:", " }}</th>
+    </tr>
+</table>
+<a href="{% url 'book:book edit' book.id %}"><span>Edit</span></a>
+<a href="{% url 'book:book delete' book.id %}"><span>Delete</span></a>
+{% endblock content %}
