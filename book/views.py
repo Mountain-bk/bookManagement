@@ -32,7 +32,7 @@ def author_register_view(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Form submission successful')
-            return redirect('book:author register')
+            return redirect('book:author')
     else:
         form = AuthorForm()
     return render(request, 'book/author_register.html', {'form': form})
