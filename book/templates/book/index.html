@@ -1,15 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    {% load static %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'book/styles.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
-    <title>Document</title>
-</head>
-<body>
-    <h1 class='title'>Welcome to UPDATED library</h1>
-    <p><a href="{% url 'book:category' %}">Category</a></p>
-</body>
-</html>
+{% extends "./base.html" %}
+{% load static %}
+
+{% block content %}
+<h1 class='title'>Welcome to UPDATED library</h1>
+<p><a href="{% url 'book:category' %}">Category</a></p>
+{% endblock content %}
