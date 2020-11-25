@@ -21,6 +21,9 @@ def author_edit_view(request, id):
             form.save()
             messages.success(request, 'Update submission succesfull')
             return redirect('book:author')
+        else:
+            messages.error(request, 'Sorry, same author already exists')
+            return redirect('book:author')
     else:
         form = AuthorForm(instance=author)
     return render(request, 'book/author_edit.html', dict(form=form, id=id))
@@ -32,6 +35,9 @@ def author_register_view(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Form submission successful')
+            return redirect('book:author')
+        else:
+            messages.error(request, 'Sorry, same author already exists')
             return redirect('book:author')
     else:
         form = AuthorForm()
