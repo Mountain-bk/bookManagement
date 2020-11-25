@@ -1,17 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "./base.html" %}
+{% load static %}
 
-<head>
-    {% load static %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'book/styles.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
-    <title>Book Manager</title>
-</head>
-
-<body>
-    <h1 class='title'>Author Edit</h1>
+{% block content %}
+<h1 class='title'>Author Edit</h1>
     <form method="POST">
         <fieldset>
             <legend>Author Editor</legend>
@@ -25,6 +16,4 @@
             <button type="submit">Update</button>
         </fieldset>
     </form>
-</body>
-
-</html>
+{% endblock content %}]

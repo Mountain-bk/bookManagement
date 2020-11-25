@@ -1,17 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "./base.html" %}
+{% load static %}
 
-<head>
-    {% load static %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'book/styles.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
-    <title>Book Manager</title>
-</head>
-
-<body>
-    <h1 class='title'>Author Delete</h1>
+{% block content %}
+<h1 class='title'>Author Delete</h1>
     <p>Confirm deleting</p>
     <p>Are you sure you want to delete " {{ author.name }} "?(<a href="{% url 'book:author' %}"><span>Back to
                 List</span></a>)
@@ -19,7 +10,4 @@
     <form method="POST">
         {% csrf_token %}
         <button type="submit">Delete</button>
-
-</body>
-
-</html>
+{% endblock content %}]
