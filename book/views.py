@@ -21,6 +21,9 @@ def category_edit_view(request, id):
             form.save()
             messages.success(request, 'Update submission succesfull')
             return redirect('book:category')
+        else:
+            messages.error(request, 'Sorry, same category already exists')
+            return redirect('book:category')
     else:
         form = CategoryForm(instance=category)
     return render(request, 'book/category_edit.html', dict(form=form, id=id))
@@ -32,6 +35,9 @@ def category_register_view(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Form submission successful')
+            return redirect('book:category')
+        else:
+            messages.error(request, 'Sorry, same category already exists')
             return redirect('book:category')
     else:
         form = CategoryForm()
