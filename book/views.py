@@ -32,7 +32,7 @@ def category_register_view(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Form submission successful')
-            return redirect('book:category register')
+            return redirect('book:category')
     else:
         form = CategoryForm()
     return render(request, 'book/category_register.html', {'form': form})
