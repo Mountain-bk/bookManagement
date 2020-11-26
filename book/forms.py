@@ -1,14 +1,12 @@
 from django import forms
-from .models import Author
+from .models import Author, Category
 
 
 class AuthorForm(forms.ModelForm):
     class Meta:
         model = Author
-        fields = [
-            'name'
-        ]
 
-        labels = {
-            'name': 'Name'
-        }
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
