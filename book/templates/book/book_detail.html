@@ -28,4 +28,6 @@
         <th>{{ book.authors.all|join:", " }}</th>
     </tr>
 </table>
+<a href="{% url 'book:book edit' book.id %}">Edit</a>
+<a href="{% url 'book:book delete' book.id %}">Delete</a>
 {% endblock content %}

@@ -18,6 +18,11 @@
         <div>
             {{ field.label_tag }}
             {{ field }}
+            {% if field.name == "categories" %}
+            <p><a href="{% url 'book:category register' %}">Add Category from here</a></p>
+            {% elif field.name == "authors" %}
+            <p><a href="{% url 'book:author register' %}">Add Author from here</a></p>
+            {% endif %}
         </div>
         {% endfor %}
         <button type="submit">Submit</button>

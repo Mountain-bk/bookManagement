@@ -14,7 +14,19 @@
     <nav>
         <form action="{% url 'book:home' %}" method="post">
             {% csrf_token %}
-            <button class="btn btn-primary btn-sm" type="submit">Home</button>
+            <button type="submit">Home</button>
+        </form>
+        <form action="{% url 'book:book shelf' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Book Shelf</button>
+        </form>
+        <form action="{% url 'book:author' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Author</button>
+        </form>
+        <form action="{% url 'book:category' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Category</button>
         </form>
     </nav>
     {% block content %}
