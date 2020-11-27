@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
-from .models import Author, Category
+from .models import Author, Category, Book
 from django.contrib import messages
 from .forms import AuthorForm, CategoryForm
+
 
 # Create your views here.
 def home_page(request):
@@ -96,3 +97,8 @@ def category_delete_view(request, id):
         messages.success(request, 'Form submission successful')
         return redirect('book:category')
     return render(request, 'book/category_delete.html', {'category': category})
+
+
+def book_shelf_view(request):
+    books = Book.objects.all()
+    return render(request, 'book/book_shelf.html', {'books': books})
