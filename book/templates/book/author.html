@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<h1 class='title'>Category</h1>
+<h1 class='title'>Author</h1>
 {% if messages %}
 <ul class="messages">
     {% for message in messages %}
@@ -10,7 +10,7 @@
     {% endfor %}
 </ul>
 {% endif %}
-<a href="{% url 'book:category register' %}">Add Category</a>
+<a href="{% url 'book:author register' %}">Add Author</a>
 <table>
     <thead>
         <tr>
@@ -18,13 +18,13 @@
         </tr>
     </thead>
     <tbody>
-        {% for category in categories %}
+        {% for author in authors %}
         <tr>
-            <th>{{ category.name }}</th>
-            <th> <a href="{% url 'book:category edit' category.id %}"><span>Edit</span></a></th>
-            <th> <a href="{% url 'book:category delete' category.id %}"><span>Delete</span></a></th>
+            <th>{{ author.name }}</th>
+            <th> <a href="{% url 'book:author edit' author.id %}"><span>Edit</span></a></th>
+            <th> <a href="{% url 'book:author delete' author.id %}"><span>Delete</span></a></th>
         </tr>
         {% endfor %}
     </tbody>
 </table>
-{% endblock content %}
+{% endblock content %}]

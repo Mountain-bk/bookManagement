@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<h1 class='title'>Category Register</h1>
+<h1 class='title'>Author Register</h1>
 <form method="POST">
     {% if messages %}
     <ul class="messages">
@@ -12,7 +12,7 @@
     </ul>
     {% endif %}
     <fieldset>
-        <legend>Category Register</legend>
+        <legend>Author Register</legend>
         {% csrf_token %}
         {% for field in form %}
         <div>
@@ -23,4 +23,4 @@
         <button type="submit">Register</button>
     </fieldset>
 </form>
-{% endblock content %}
+{% endblock content %}]

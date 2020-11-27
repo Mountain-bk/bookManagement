@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block content %}
-<h1 class='title'>Home Page</h1>
+<h1 class='title'>Welcome to UPDATED library</h1>
+<p><a href="{% url 'book:author' %}">Author</a></p>
 <p><a href="{% url 'book:category' %}">Category</a></p>
 {% endblock content %}
