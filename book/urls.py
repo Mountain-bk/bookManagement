@@ -10,7 +10,10 @@ urlpatterns = [
     path('author-delete/<int:id>', views.author_delete_view, name='author delete'),
     path('category/', views.category_view, name='category'),
     path('category-edit/<int:id>', views.category_edit_view, name='category edit'),
-    path('category-register/', views.category_register_view, name='category register'),
-    path('category-delete/<int:id>', views.category_delete_view, name='category delete'),
-    path('book-shelf/', views.book_shelf_view, name='book shelf')
+    path('category-register/', views.category_register_view,
+         name='category register'),
+    path('category-delete/<int:id>',
+         views.category_delete_view, name='category delete'),
+    path('book-shelf/', views.book_shelf_view, name='book shelf'),
+    path('book-register/', views.book_register_view, name='book register')
 ]
