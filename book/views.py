@@ -128,7 +128,7 @@ def book_edit_view(request, id):
             messages.success(request, 'Update submission succesfull')
             return redirect('book:book shelf')
         else:
-            messages.error(request, 'Sorry, same category already exists')
+            messages.error(request, 'Sorry, there is an error.')
             return redirect('book:book shelf')
     else:
         form = BookForm(instance=book)
