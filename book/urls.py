@@ -15,5 +15,6 @@ urlpatterns = [
     path('category-delete/<int:id>',
          views.category_delete_view, name='category delete'),
     path('book-shelf/', views.book_shelf_view, name='book shelf'),
-    path('book-register/', views.book_register_view, name='book register')
+    path('book-register/', views.book_register_view, name='book register'),
+    path('book-edit/<int:id>', views.book_edit_view, name='book edit')
 ]
