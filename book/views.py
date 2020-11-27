@@ -112,7 +112,7 @@ def book_register_view(request):
             messages.success(request, 'Form submission successful')
             return redirect('book:book shelf')
         else:
-            messages.error(request, 'Sorry, same book already exists')
+            messages.error(request, 'Sorry, there is an error.')
             return redirect('book:book shelf')
     else:
         form = BookForm()
