@@ -20,6 +20,9 @@
             {% for book in books %}
             <tr>
                 <td>{{ book.title }}</td>
+                <td> <a href="{% url 'book:book edit' book.id %}"><span>Edit</span></a></td>
+                <td> <a href="{% url 'book:book detail' book.id %}"><span>Detail</span></a></td>
+                <td> <a href="{% url 'book:book delete' book.id %}"><span>Delete</span></a></td>
             </tr>
             {% endfor %}
         </tbody>
