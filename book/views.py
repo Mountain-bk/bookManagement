@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import Author, Category, Book
 from django.contrib import messages
-from .forms import AuthorForm, CategoryForm
+from .forms import AuthorForm, CategoryForm, BookForm
 
 
 # Create your views here.
@@ -102,3 +102,15 @@ def category_delete_view(request, id):
 def book_shelf_view(request):
     books = Book.objects.all()
     return render(request, 'book/book_shelf.html', {'books': books})
+
+
+def book_register_view(request):
+    if request.method == "POST":
+        form = BookForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Form submission successful')
+            return redirect('book:book shelf')
+    else:
+        form = BookForm()
+    return render(request, 'book/book_register.html', {'form': form})
