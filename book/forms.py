@@ -40,9 +40,8 @@ class BookForm(forms.ModelForm):
         }
 
     def clean(self):
-        cleaned_data = super().clean()
-        title = cleaned_data.get('title')
-        for author in cleaned_data.get('authors'):
-            if Book.objects.filter(title=title).filter(authors=author):
-                raise ValidationError(
-                    "You can't add same book with same author")
+        title = self.cleaned_data.get('title')
+        authors = self.cleaned_data.get('authors')
+        for author in authors:
+            if Book.objects.filter(title=title, authors=author).exclude(id=self.instance.id):
+                raise ValidationError("FUCK")
