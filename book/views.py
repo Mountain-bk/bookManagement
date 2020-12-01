@@ -108,9 +108,14 @@ def book_register_view(request):
     if request.method == "POST":
         form = BookForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Form submission successful')
-            return redirect('book:book shelf')
+            for author in form.cleaned_data['authors']:
+                if Book.objects.filter(title=form.cleaned_data['title']).filter(authors=author):
+                    messages.error(request, 'Sorry, there is an error.')
+                    return redirect('book:book shelf')
+                else:
+                    form.save()
+                    messages.success(request, 'Form submission successful')
+                    return redirect('book:book shelf')
         else:
             messages.error(request, 'Sorry, there is an error.')
             return redirect('book:book shelf')
@@ -121,12 +126,20 @@ def book_register_view(request):
 
 def book_edit_view(request, id):
     book = Book.objects.get(id=id)
+    same_author_list = []
     if request.method == 'POST':
         form = BookForm(request.POST, instance=book)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Update submission succesfull')
-            return redirect('book:book shelf')
+            for author in form.cleaned_data['authors']:
+                if Book.objects.filter(title=form.cleaned_data['title'], authors=author).exclude(id=book.id):
+                    same_author_list.append(author)
+            if same_author_list == []:
+                form.save()
+                messages.success(request, 'Form submission successful')
+                return redirect('book:book shelf')
+            else:
+                messages.error(request, 'Sorry, there is an error.')
+                return redirect('book:book shelf')
         else:
             messages.error(request, 'Sorry, there is an error.')
             return redirect('book:book shelf')
