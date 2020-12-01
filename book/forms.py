@@ -44,4 +44,4 @@ class BookForm(forms.ModelForm):
         authors = self.cleaned_data.get('authors')
         for author in authors:
             if Book.objects.filter(title=title, authors=author).exclude(id=self.instance.id):
-                raise ValidationError("FUCK")
+                raise ValidationError("Error")
