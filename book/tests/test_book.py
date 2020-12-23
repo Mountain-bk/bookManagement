@@ -33,7 +33,7 @@ def setup_book_objects():
     b2.authors.add(a1)
 
 
-def test_book_register_with_same_title(setup_book, client):
+def test_book_register_with_same_title(setup_book_objects, client):
     """Book will be registred if same title exists but authors don't match"""
     c1_pk = Category.objects.get(name='Novel').pk
     a1_pk = Author.objects.get(name='サン・テグジュペリ').pk
@@ -56,13 +56,13 @@ def test_book_register_with_same_title(setup_book, client):
     messages = list(response.context['messages'])
     # get message set in views.py
     response_message = messages[0]
-    # Success message
+    # Retrieve success message and book_list matches expected_list if form submission success
     assert response_message.message == 'Form submission successful'
-    # 2 books exists with same title
-    assert book_list.count('星の王子様') == 2
+    expected_list = ['星の王子様', '星の王子様', '人間の大地']
+    assert sorted(expected_list) == sorted(book_list)
 
 
-def test_book_register_with_same_title_and_author(setup_book, client):
+def test_book_register_with_same_title_and_author(setup_book_objects, client):
     """Book won't be registred if same title exists and authors match"""
     c1_pk = Category.objects.get(name='Novel').pk
     c2_pk = Category.objects.get(name='Design').pk
@@ -87,13 +87,13 @@ def test_book_register_with_same_title_and_author(setup_book, client):
     messages = list(response.context['messages'])
     # get message set in views.py
     response_message = messages[0]
-    # Error message
+    # Retrieve error message and book_list matches expected_list if form submission fail
     assert response_message.message == 'Sorry, there is an error.'
-    # 1 book exists, not 2
-    assert book_list.count('星の王子様') == 1
+    expected_list = ['星の王子様', '人間の大地']
+    assert sorted(expected_list) == sorted(book_list)
 
 
-def test_book_edit_with_same_title(setup_book, client):
+def test_book_edit_with_same_title(setup_book_objects, client):
     """Book will be updated if same title exists but authors don't match"""
     b1_pk = Book.objects.get(title='人間の大地').pk
     c1_pk = Category.objects.get(name='Novel').pk
@@ -118,13 +118,13 @@ def test_book_edit_with_same_title(setup_book, client):
     messages = list(response.context['messages'])
     # get message set in views.py
     response_message = messages[0]
-    # Success message
+    # Retrieve success message and book_list matches expected_list if form submission success
     assert response_message.message == 'Update submission succesfull'
-    # 2 books exists with same title
-    assert book_list.count('星の王子様') == 2
+    expected_list = ['星の王子様', '星の王子様']
+    assert sorted(expected_list) == sorted(book_list)
 
 
-def test_book_edit_with_same_title_and_author(setup_book, client):
+def test_book_edit_with_same_title_and_author(setup_book_objects, client):
     """Book won't be updated if same title exists and authors match"""
     b1_pk = Book.objects.get(title='人間の大地').pk
     a1_pk = Author.objects.get(name='サン・テグジュペリ').pk
@@ -150,7 +150,7 @@ def test_book_edit_with_same_title_and_author(setup_book, client):
     messages = list(response.context['messages'])
     # get message set in views.py
     response_message = messages[0]
-    # Error message
+    # Retrieve error message and book_list matches expected_list if form submission fail
     assert response_message.message == 'Sorry, there is an error.'
-    # 1 book exists, not 2
-    assert book_list.count('星の王子様') == 1
+    expected_list = ['星の王子様', '人間の大地']
+    assert sorted(expected_list) == sorted(book_list)
