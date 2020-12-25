@@ -1,0 +1,32 @@
+{% extends "./base.html" %}
+
+{% block content %}
+<h1 class='title'>Book Shelf</h1>
+<div class='content'>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <p><a href="{% url 'book:book register' %}">Add Book</a></p>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+            <tr>
+                <td>{{ book.title }}</td>
+                <td> <a href="{% url 'book:book edit' book.id %}"><span>Edit</span></a></td>
+                <td> <a href="{% url 'book:book detail' book.id %}"><span>Detail</span></a></td>
+                <td> <a href="{% url 'book:book delete' book.id %}"><span>Delete</span></a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}
