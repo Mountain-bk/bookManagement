@@ -11,8 +11,8 @@ def setup_author_objects():
     ])
 
 
+# 同じ著者が存在しない場合は登録が出来ることをテスト
 def test_author_register_with_not_existing_name(setup_author_objects, client):
-    """同じ著者が存在しない場合は登録が出来ることをテスト"""
     form_data = {'name': '村上春樹'}
     response = client.post('/author-register/', form_data, follow=True)
     authors = list(response.context['authors'])
@@ -26,11 +26,10 @@ def test_author_register_with_not_existing_name(setup_author_objects, client):
     assert sorted(expected_list) == sorted(author_list)
 
 
+# 同じ著者が存在する場合は登録が拒否されることをテスト
 def test_author_register_with_existing_name(setup_author_objects, client):
-    """同じ著者が存在する場合は登録が拒否されることをテスト"""
     form_data = {'name': 'サン・テグジュペリ'}
     response = client.post('/author-register/', form_data, follow=True)
-    # retrieve 'authors' context from response
     authors = list(response.context['authors'])
     author_list = []
     for author in authors:
@@ -42,8 +41,8 @@ def test_author_register_with_existing_name(setup_author_objects, client):
     assert sorted(expected_list) == sorted(author_list)
 
 
+# 編集後の著者が既に存在していなければ編集が完了することをテスト
 def test_author_edit_to_not_existing_name(setup_author_objects, client):
-    """編集後の著者が重複していなければ編集が完了することをテスト"""
     a1 = Author.objects.get(name='サン・テグジュペリ')
     response = client.post(reverse('book:author edit', kwargs={'id': a1.id}), {
         'name': '東野圭吾'}, follow=True)
@@ -58,8 +57,8 @@ def test_author_edit_to_not_existing_name(setup_author_objects, client):
     assert sorted(expected_list) == sorted(author_list)
 
 
+# 編集後の著者が既に存在していれば編集が拒否されることをテスト
 def test_author_edit_existing_name(setup_author_objects, client):
-    """編集後の著者の名前が重複していれば拒否されることをテスト"""
     a1 = Author.objects.get(name='サン・テグジュペリ')
     response = client.post(reverse('book:author edit', kwargs={'id': a1.id}), {
         'name': '池澤夏樹'}, follow=True)

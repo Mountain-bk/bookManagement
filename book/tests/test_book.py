@@ -27,8 +27,8 @@ def setup_book_objects():
     b2.authors.add(a1)
 
 
+# 同じタイトルでも著者が一致していなければ登録が出来ることをテスト
 def test_book_register_with_same_title(setup_book_objects, client):
-    """同じタイトルでも著者が一致していなければ登録が出来ることをテスト"""
     c1_pk = Category.objects.get(name='Novel').pk
     a1_pk = Author.objects.get(name='サン・テグジュペリ').pk
     form_data = {
@@ -49,8 +49,8 @@ def test_book_register_with_same_title(setup_book_objects, client):
     assert sorted(expected_list) == sorted(book_list)
 
 
+# 「同じタイトルかつ同じ著者」の組み合わせの本が存在する場合は登録が拒否されることをテスト
 def test_book_register_with_same_title_and_author(setup_book_objects, client):
-    """同じタイトルかつ同じ著者の組み合わせの場合は登録が拒否されることをテスト"""
     c1_pk = Category.objects.get(name='Novel').pk
     c2_pk = Category.objects.get(name='Design').pk
     a1_pk = Author.objects.get(name='サン・テグジュペリ').pk
@@ -73,8 +73,8 @@ def test_book_register_with_same_title_and_author(setup_book_objects, client):
     assert sorted(expected_list) == sorted(book_list)
 
 
+# 同じタイトルでも著者が一致してなければ編集が出来ることをテスト
 def test_book_edit_with_same_title(setup_book_objects, client):
-    """同じタイトルでも著者が一致してなければ編集が出来ることをテスト"""
     b1_pk = Book.objects.get(title='人間の大地').pk
     c1_pk = Category.objects.get(name='Novel').pk
     a1_pk = Author.objects.get(name='サン・テグジュペリ').pk
@@ -97,8 +97,8 @@ def test_book_edit_with_same_title(setup_book_objects, client):
     assert sorted(expected_list) == sorted(book_list)
 
 
+# 「同じタイトルかつ同じ著者」の組み合わせの本が存在する場合は編集が拒否されることをテスト
 def test_book_edit_with_same_title_and_author(setup_book_objects, client):
-    """同じタイトルかつ同じ著者の組み合わせの場合は編集が拒否されることをテスト"""
     b1_pk = Book.objects.get(title='人間の大地').pk
     a1_pk = Author.objects.get(name='サン・テグジュペリ').pk
     a2_pk = Author.objects.get(name='池澤夏樹').pk
