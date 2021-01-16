@@ -166,7 +166,7 @@ def export_csv(request):
     books = Book.objects.all()
     for index, book in enumerate(books, 1):
         authors = ", ".join(list(book.authors.all().values_list('name', flat=True)))
-        categories = list(book.categories.all().values_list('name', flat=True))
+        categories = ", ".join(list(book.categories.all().values_list('name', flat=True)))
 
         # ""で囲んで表示したい場合
         # authors = '"{}"'.format(authors)
