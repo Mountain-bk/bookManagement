@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect
 from .models import Author, Category, Book
 from django.contrib import messages
 from .forms import AuthorForm, CategoryForm, BookForm
+import csv
+from django.http import HttpResponse
+import datetime
 
 
 # Create your views here.
@@ -147,3 +150,27 @@ def book_delete_view(request, id):
         messages.success(request, 'Form submission successful')
         return redirect('book:book shelf')
     return render(request, 'book/book_delete.html', {'book': book})
+
+
+def export_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    today_string = datetime.datetime.today().strftime('%x')
+
+    # ファイル名　'book_detail_01_16_21.csv'
+    response['Content-Disposition'] = 'attachment; filename="ook_detail_{}.csv"'.format(today_string)
+
+    writer = csv.writer(response)
+    # ヘッダー
+    writer.writerow(['No.', 'Title', 'Published Date', 'Author', 'Category'])
+ 
+    books = Book.objects.all()
+    for index, book in enumerate(books, 1):
+        authors = ", ".join(list(book.authors.all().values_list('name', flat=True)))
+        categories = list(book.categories.all().values_list('name', flat=True))
+
+        # ""で囲んで表示したい場合
+        # authors = '"{}"'.format(authors)
+        # categories = '"{}"'.format(categories)
+
+        writer.writerow([index, book.title, book.published_date, authors, categories])
+    return response

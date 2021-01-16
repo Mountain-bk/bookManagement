@@ -18,5 +18,6 @@ urlpatterns = [
     path('book-register/', views.book_register_view, name='book register'),
     path('book-edit/<int:id>', views.book_edit_view, name='book edit'),
     path('book-detail/<int:id>', views.book_detail_view, name='book detail'),
-    path('book-delete/<int:id>', views.book_delete_view, name='book delete')
+    path('book-delete/<int:id>', views.book_delete_view, name='book delete'), 
+    path('export-csv', views.export_csv, name='export csv')
 ]
