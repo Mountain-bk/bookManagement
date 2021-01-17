@@ -157,7 +157,7 @@ def export_csv(request):
     today_string = datetime.datetime.today().strftime('%x')
 
     # ファイル名　'book_detail_01_16_21.csv'
-    response['Content-Disposition'] = 'attachment; filename="ook_detail_{}.csv"'.format(today_string)
+    response['Content-Disposition'] = f'attachment; filename="book_detail_{today_string}.csv"'
 
     writer = csv.writer(response)
     # ヘッダー
