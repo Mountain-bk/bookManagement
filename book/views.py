@@ -1,3 +1,4 @@
+from django.db.models.query import Prefetch
 from django.shortcuts import render, redirect
 from .models import Author, Category, Book
 from django.contrib import messages
@@ -162,11 +163,19 @@ def export_csv(request):
     writer = csv.writer(response)
     # ヘッダー
     writer.writerow(['No.', 'Title', 'Published Date', 'Author', 'Category'])
- 
-    books = Book.objects.all()
-    for index, book in enumerate(books, 1):
-        authors = ", ".join(list(book.authors.all().values_list('name', flat=True)))
-        categories = ", ".join(list(book.categories.all().values_list('name', flat=True)))
+    
+    for index, book in enumerate(Book.objects.all().prefetch_related('authors', 'categories'), 1):
+        authors = []
+        categories = []
+
+        for author in book.authors.all():
+            authors.append(author.name)
+        
+        for category in book.categories.all():
+            categories.append(category.name)
+
+        authors = ", ".join(authors)
+        categories = ", ".join(categories)
 
         # ""で囲んで表示したい場合
         # authors = '"{}"'.format(authors)
