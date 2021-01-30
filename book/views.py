@@ -7,6 +7,7 @@ from django.shortcuts import redirect, render
 
 from .forms import AuthorForm, BookForm, CategoryForm
 from .models import Author, Book, Category
+from io import TextIOWrapper
 
 
 # Create your views here.
@@ -170,9 +171,56 @@ def export_csv(request):
         Book.objects.all().prefetch_related("authors", "categories"), 1
     ):
         authors = ", ".join([author.name for author in book.authors.all()])
-        categories = ", ".join([category.name for category in book.categories.all()])
+        categories = ", ".join(
+            [category.name for category in book.categories.all()])
 
         # ""で囲んで表示したい場合は f'"{authors}"'
 
-        writer.writerow([index, book.title, book.published_date, authors, categories])
+        writer.writerow(
+            [index, book.title, book.published_date, authors, categories])
     return response
+
+
+def import_csv(request):
+    # CSVファイルかの確認
+    if not request.FILES['csv'].name.endswith('.csv'):
+        messages.error(request, "Wrong File Format")
+        return redirect("book:book shelf")
+    form_data = TextIOWrapper(request.FILES['csv'].file, encoding='utf-8')
+    csv_file = csv.reader(form_data)
+    next(csv_file, None)
+    not_register_list = []
+    for line in csv_file:
+        duplicate = False
+        author_names = line[3].split(",")
+        category_names = line[4].split(",")
+        # タイトルと著者の完全一致が無いかの確認
+        if Book.objects.filter(title=line[1]):
+            same_books = list(Book.objects.filter(title=line[1]))
+            for same_book in same_books:
+                exist_authors = list(
+                    same_book.authors.values_list('name', flat=True))
+                if sorted(exist_authors) == sorted(author_names):
+                    duplicate = True
+                    not_register_list.append(line[1])
+                    break
+
+        if duplicate:
+            continue
+
+        book = Book.objects.create(title=line[1], published_date=line[2])
+        for category_name in category_names:
+            category, _ = Category.objects.get_or_create(name=category_name)
+            print(category)
+            book.categories.add(category)
+        for author_name in author_names:
+            author, _ = Author.objects.get_or_create(name=author_name)
+            book.authors.add(author)
+
+    if not_register_list:
+        messages.warning(
+            request, f"{not_register_list} are not registered due to duplicate error")
+        return redirect("book:book shelf")
+    else:
+        messages.success(request, "Form submission successful")
+        return redirect("book:book shelf")
