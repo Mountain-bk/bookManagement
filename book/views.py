@@ -1,13 +1,14 @@
 import csv
 import datetime
+from io import TextIOWrapper
 
 from django.contrib import messages
+from django.core.exceptions import ValidationError
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
 from .forms import AuthorForm, BookForm, CategoryForm
 from .models import Author, Book, Category
-from io import TextIOWrapper
 
 
 # Create your views here.
@@ -189,38 +190,58 @@ def import_csv(request):
     form_data = TextIOWrapper(request.FILES['csv'].file, encoding='utf-8')
     csv_file = csv.reader(form_data)
     next(csv_file, None)
-    not_register_list = []
+    duplicate_list = []
+    error_list = []
     for line in csv_file:
         duplicate = False
-        author_names = line[3].split(",")
-        category_names = line[4].split(",")
+        author_names = line[2].split(",")
+        category_names = line[3].split(",")
         # タイトルと著者の完全一致が無いかの確認
-        if Book.objects.filter(title=line[1]):
-            same_books = list(Book.objects.filter(title=line[1]))
+        if Book.objects.filter(title=line[0]):
+            same_books = list(Book.objects.filter(title=line[0]))
             for same_book in same_books:
                 exist_authors = list(
                     same_book.authors.values_list('name', flat=True))
                 if sorted(exist_authors) == sorted(author_names):
+                    print("Error")
                     duplicate = True
-                    not_register_list.append(line[1])
+                    duplicate_list.append(line[0])
                     break
 
         if duplicate:
             continue
 
-        book = Book.objects.create(title=line[1], published_date=line[2])
-        for category_name in category_names:
-            category, _ = Category.objects.get_or_create(name=category_name)
-            print(category)
-            book.categories.add(category)
-        for author_name in author_names:
-            author, _ = Author.objects.get_or_create(name=author_name)
-            book.authors.add(author)
+        try:
+            book = Book.objects.create(title=line[0], published_date=line[1])
+            for category_name in category_names:
+                category, _ = Category.objects.get_or_create(
+                    name=category_name)
+                book.categories.add(category)
+            for author_name in author_names:
+                author, _ = Author.objects.get_or_create(name=author_name)
+                book.authors.add(author)
+        except ValidationError as e:
+            error_list.extend(e)
 
-    if not_register_list:
-        messages.warning(
-            request, f"{not_register_list} are not registered due to duplicate error")
+    if duplicate_list is not None:
+        error_list.append(
+            f"{duplicate_list} are not registered due to duplicate error")
+
+    if error_list is not None:
+        for error in error_list:
+            messages.warning(request, error)
         return redirect("book:book shelf")
     else:
         messages.success(request, "Form submission successful")
         return redirect("book:book shelf")
+
+
+def export_template(request):
+    response = HttpResponse(content_type="text/csv")
+    response[
+        "Content-Disposition"
+    ] = 'attachment; filename="book_upload_file.csv"'
+    writer = csv.writer(response)
+    writer.writerow(["Title(Required)", "Published Date('2021-01-30)",
+                     "Author(Author1,Author2)", "Category(Category1,Category2)"])
+    return response
