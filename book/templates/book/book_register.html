@@ -3,14 +3,23 @@
 
 {% block content %}
 <h1 class='title'>Book Register</h1>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+<form action="{% url 'book:import csv' %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="csv">
+    <button type="submit">Upload</button>
+</form>
+<form action="{% url 'book:export template' %}">
+    {% csrf_token %}
+    <button type="submit">Download upload file(CSV)</button>
+</form>
 <form method="POST">
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
     <fieldset>
         <legend>Book Register</legend>
         {% csrf_token %}
