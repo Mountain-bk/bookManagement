@@ -221,6 +221,12 @@ def import_csv(request):
                     duplicate_list.append(line[0])
                     break
 
+        for import_book in import_books:
+            if import_book.get("title") == line[0] and import_book.get("authors") == author_names:
+                duplicate = True
+                duplicate_list.append(line[0])
+                break
+
         if duplicate:
             continue
 
