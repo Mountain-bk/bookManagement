@@ -192,8 +192,8 @@ def import_csv(request):
     duplicate_list, error_list = [], []
     empty_error, date_format_error = " ", " "
     date_format = "%Y-%m-%d"
-    import_details = {}
     import_books = []
+    import_details = {}
     for line in csv_file:
         # 空欄が無いかの確認
         if line[0] == "" or line[1] == "" or line[2] == "" or line[3] == "":
@@ -236,6 +236,7 @@ def import_csv(request):
         import_details["categories"] = category_names
 
         import_books.append(import_details)
+        import_details = {}
 
     if len(duplicate_list) != 0:
         error_list.append(
@@ -262,10 +263,10 @@ def import_csv(request):
         for import_book in import_books:
             book = Book.objects.create(
                 title=import_book["title"], published_date=import_book["published_date"])
-            for author_name in import_details["authors"]:
+            for author_name in import_book["authors"]:
                 author, _ = Author.objects.get_or_create(name=author_name)
                 book.authors.add(author)
-            for category_name in import_details["categories"]:
+            for category_name in import_book["categories"]:
                 category, _ = Category.objects.get_or_create(
                     name=category_name)
                 book.categories.add(category)
