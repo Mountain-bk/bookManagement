@@ -106,6 +106,33 @@ def category_delete_view(request, id):
 
 def book_shelf_view(request):
     books = Book.objects.all()
+    if request.method == "POST":
+        if 'csv-export' in request.POST:
+            response = HttpResponse(content_type="text/csv")
+            today_string = datetime.datetime.today().strftime("%x")
+
+            # ファイル名　'book_detail_01_16_21.csv'
+            response[
+                "Content-Disposition"
+            ] = f'attachment; filename="book_detail_{today_string}.csv"'
+
+            writer = csv.writer(response)
+            # ヘッダー
+            writer.writerow(
+                ["No.", "Title", "Published Date", "Author", "Category"])
+            for index, book in enumerate(
+                Book.objects.all().prefetch_related("authors", "categories"), 1
+            ):
+                authors = ", ".join(
+                    [author.name for author in book.authors.all()])
+                categories = ", ".join(
+                    [category.name for category in book.categories.all()])
+
+                # ""で囲んで表示したい場合は f'"{authors}"'
+
+                writer.writerow(
+                    [index, book.title, book.published_date, authors, categories])
+            return response
     return render(request, "book/book_shelf.html", {"books": books})
 
 
@@ -154,25 +181,27 @@ def book_delete_view(request, id):
     return render(request, "book/book_delete.html", {"book": book})
 
 
-def export_csv(request):
-    response = HttpResponse(content_type="text/csv")
-    today_string = datetime.datetime.today().strftime("%x")
+# def export_csv(request):
+#     response = HttpResponse(content_type="text/csv")
+#     today_string = datetime.datetime.today().strftime("%x")
 
-    # ファイル名　'book_detail_01_16_21.csv'
-    response[
-        "Content-Disposition"
-    ] = f'attachment; filename="book_detail_{today_string}.csv"'
+#     # ファイル名　'book_detail_01_16_21.csv'
+#     response[
+#         "Content-Disposition"
+#     ] = f'attachment; filename="book_detail_{today_string}.csv"'
 
-    writer = csv.writer(response)
-    # ヘッダー
-    writer.writerow(["No.", "Title", "Published Date", "Author", "Category"])
-    for index, book in enumerate(
-        Book.objects.all().prefetch_related("authors", "categories"), 1
-    ):
-        authors = ", ".join([author.name for author in book.authors.all()])
-        categories = ", ".join([category.name for category in book.categories.all()])
+#     writer = csv.writer(response)
+#     # ヘッダー
+#     writer.writerow(["No.", "Title", "Published Date", "Author", "Category"])
+#     for index, book in enumerate(
+#         Book.objects.all().prefetch_related("authors", "categories"), 1
+#     ):
+#         authors = ", ".join([author.name for author in book.authors.all()])
+#         categories = ", ".join(
+#             [category.name for category in book.categories.all()])
 
-        # ""で囲んで表示したい場合は f'"{authors}"'
+#         # ""で囲んで表示したい場合は f'"{authors}"'
 
-        writer.writerow([index, book.title, book.published_date, authors, categories])
-    return response
+#         writer.writerow(
+#             [index, book.title, book.published_date, authors, categories])
+#     return response
