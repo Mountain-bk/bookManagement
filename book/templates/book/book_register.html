@@ -10,14 +10,15 @@
     {% endfor %}
 </ul>
 {% endif %}
-<form action="{% url 'book:import csv' %}" method="POST" enctype="multipart/form-data">
+
+<form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     <input type="file" name="csv">
-    <button type="submit">Upload</button>
+    <button type="submit" name="csv-import">Upload</button>
 </form>
-<form action="{% url 'book:export template' %}">
+<form method="POST">
     {% csrf_token %}
-    <button type="submit">Download upload file(CSV)</button>
+    <button type="submit" name="export-template">Download upload file(CSV)</button>
 </form>
 <form method="POST">
     <fieldset>
@@ -34,7 +35,7 @@
             {% endif %}
         </div>
         {% endfor %}
-        <button type="submit">Submit</button>
+        <button type="submit" name="register-form">Submit</button>
     </fieldset>
 </form>
 {% endblock content %}
