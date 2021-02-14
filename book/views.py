@@ -4,9 +4,11 @@ import datetime
 from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
+from rest_framework.viewsets import ModelViewSet
 
 from .forms import AuthorForm, BookForm, CategoryForm
 from .models import Author, Book, Category
+from .serializers import AuthorSerializer, BookSerializer, CategorySerializer
 
 
 # Create your views here.
@@ -176,3 +178,18 @@ def export_csv(request):
 
         writer.writerow([index, book.title, book.published_date, authors, categories])
     return response
+
+
+class BookViewSet(ModelViewSet):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+
+
+class AuthorViewSet(ModelViewSet):
+    queryset = Author.objects.all()
+    serializer_class = AuthorSerializer
+
+
+class CategoryViewSet(ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
