@@ -3,14 +3,24 @@
 
 {% block content %}
 <h1 class='title'>Book Register</h1>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="csv">
+    <button type="submit" name="csv-import">Upload</button>
+</form>
 <form method="POST">
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
+    {% csrf_token %}
+    <button type="submit" name="export-template">Download upload file(CSV)</button>
+</form>
+<form method="POST">
     <fieldset>
         <legend>Book Register</legend>
         {% csrf_token %}
@@ -25,7 +35,7 @@
             {% endif %}
         </div>
         {% endfor %}
-        <button type="submit">Submit</button>
+        <button type="submit" name="register-form">Submit</button>
     </fieldset>
 </form>
 {% endblock content %}
