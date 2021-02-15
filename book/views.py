@@ -299,4 +299,3 @@ def book_delete_view(request, id):
         messages.success(request, "Form submission successful")
         return redirect("book:book shelf")
     return render(request, "book/book_delete.html", {"book": book})
- 
