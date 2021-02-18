@@ -11,9 +11,9 @@
     </ul>
     {% endif %}
     <p><a href="{% url 'book:book register' %}">Add Book</a></p>
-    <form action="{% url 'book:export csv' %}">
+    <form method="POST">
         {% csrf_token %}
-        <button type="submit">Download Book Details(CSV)</button>
+        <button type="submit" name="csv-export">Download Book Details(CSV)</button>
     </form>
     <table>
         <thead>
