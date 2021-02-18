@@ -9,8 +9,14 @@ router.register(r"categories", views.CategoryViewSet)
 
 app_name = "book"
 urlpatterns = [
-    path("api", include(router.urls)),
-    path("", views.home_page, name="home"),
+    path("", include(router.urls)),
+    path("api/books", views.book_list),
+    path("api/books/<int:id>", views.book_detail),
+    path("api/authors", views.author_list),
+    path("api/authors/<int:id>", views.author_detail),
+    path("api/categories", views.category_list),
+    path("api/categories/<int:id>", views.category_detail),
+    path("home/", views.home_page, name="home"),
     path("author/", views.author_view, name="author"),
     path("author-edit/<int:id>", views.author_edit_view, name="author edit"),
     path("author-register/", views.author_register_view, name="author register"),
