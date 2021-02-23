@@ -24,6 +24,7 @@ def setup_book_objects():
     b2.authors.add(a1)
 
 
+# Test retrieving a list of book details
 def test_get_book_list_detail_api(setup_book_objects, client):
     b1_pk = Book.objects.get(title="Book1").pk
     b2_pk = Book.objects.get(title="Book2").pk
@@ -59,6 +60,7 @@ def test_get_book_list_detail_api(setup_book_objects, client):
     assert expected_data == get_response_data
 
 
+# Test creating a new book
 def test_post_book_detail_api(setup_book_objects, client):
     b1_pk = Book.objects.get(title="Book1").pk
     b2_pk = Book.objects.get(title="Book2").pk
@@ -113,6 +115,7 @@ def test_post_book_detail_api(setup_book_objects, client):
     assert expected_data == get_response_data
 
 
+# Test retrieving individual book detail
 def test_get_book_detail_api(setup_book_objects, client):
     b1_pk = Book.objects.get(title="Book1").pk
     c1_pk = Category.objects.get(name="Category1").pk
@@ -134,6 +137,7 @@ def test_get_book_detail_api(setup_book_objects, client):
     assert expected_data == get_response_data
 
 
+# Test updating individual book details
 def test_put_book_detail_api(setup_book_objects, client):
     b1_pk = Book.objects.get(title="Book1").pk
     c1_pk = Category.objects.get(name="Category1").pk
@@ -164,6 +168,7 @@ def test_put_book_detail_api(setup_book_objects, client):
     assert expected_data == get_response_data
 
 
+# Test deleting individual book
 def test_delete_book_api(setup_book_objects, client):
     b1_pk = Book.objects.get(title="Book1").pk
     b2_pk = Book.objects.get(title="Book2").pk
@@ -186,6 +191,7 @@ def test_delete_book_api(setup_book_objects, client):
     assert expected_data == get_response_data
 
 
+# Test retrieving a list of author details
 def test_get_author_list_detail_api(setup_book_objects, client):
     a1_pk = Author.objects.get(name="Author1").pk
     a2_pk = Author.objects.get(name="Author2").pk
@@ -202,6 +208,7 @@ def test_get_author_list_detail_api(setup_book_objects, client):
     assert expected_data == response_data
 
 
+# Test creating a new author
 def test_post_author_detail_api(setup_book_objects, client):
     a1_pk = Author.objects.get(name="Author1").pk
     a2_pk = Author.objects.get(name="Author2").pk
@@ -222,6 +229,7 @@ def test_post_author_detail_api(setup_book_objects, client):
     assert expected_data == get_response_data
 
 
+# Test retrieving individual author detail
 def test_get_author_detail_api(setup_book_objects, client):
     a1_pk = Author.objects.get(name="Author1").pk
     get_response_data = client.get("/api/authors/" + str(a1_pk)).content.decode("utf-8")
@@ -230,6 +238,7 @@ def test_get_author_detail_api(setup_book_objects, client):
     assert expected_data == get_response_data
 
 
+# Test updating individual author details
 def test_put_author_detail_api(setup_book_objects, client):
     b1_pk = Book.objects.get(title="Book1").pk
     c1_pk = Category.objects.get(name="Category1").pk
@@ -268,6 +277,7 @@ def test_put_author_detail_api(setup_book_objects, client):
     assert books_expected_data == books_get_response_data
 
 
+# Test deleting individual author
 def test_delete_author_api(setup_book_objects, client):
     b1_pk = Book.objects.get(title="Book1").pk
     b2_pk = Book.objects.get(title="Book2").pk
@@ -304,6 +314,7 @@ def test_delete_author_api(setup_book_objects, client):
     assert books_expected_data == books_get_response_data
 
 
+# Test retrieving a list of category details
 def test_get_category_list_detail_api(setup_book_objects, client):
     c1_pk = Category.objects.get(name="Category1").pk
     c2_pk = Category.objects.get(name="Category2").pk
@@ -320,6 +331,7 @@ def test_get_category_list_detail_api(setup_book_objects, client):
     assert expected_data == response_data
 
 
+# Test creating a new category
 def test_post_category_detail_api(setup_book_objects, client):
     c1_pk = Category.objects.get(name="Category1").pk
     c2_pk = Category.objects.get(name="Category2").pk
@@ -340,6 +352,7 @@ def test_post_category_detail_api(setup_book_objects, client):
     assert expected_data == get_response_data
 
 
+# Test retrieving individual category detail
 def test_get_category_detail_api(setup_book_objects, client):
     c1_pk = Category.objects.get(name="Category1").pk
     get_response_data = client.get("/api/categories/" + str(c1_pk)).content.decode(
@@ -350,6 +363,7 @@ def test_get_category_detail_api(setup_book_objects, client):
     assert expected_data == get_response_data
 
 
+# Test updating individual category details
 def test_put_category_detail_api(setup_book_objects, client):
     b1_pk = Book.objects.get(title="Book1").pk
     c1_pk = Category.objects.get(name="Category1").pk
@@ -389,6 +403,7 @@ def test_put_category_detail_api(setup_book_objects, client):
     assert books_expected_data == books_get_response_data
 
 
+# Test deleting individual category
 def test_delete_category_api(setup_book_objects, client):
     b1_pk = Book.objects.get(title="Book1").pk
     b2_pk = Book.objects.get(title="Book2").pk
