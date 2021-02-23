@@ -113,7 +113,7 @@ def category_delete_view(request, id):
 def book_shelf_view(request):
     books = Book.objects.all()
     if request.method == "POST":
-        if 'csv-export' in request.POST:
+        if "csv-export" in request.POST:
             response = HttpResponse(content_type="text/csv")
             today_string = datetime.datetime.today().strftime("%x")
 
@@ -124,20 +124,20 @@ def book_shelf_view(request):
 
             writer = csv.writer(response)
             # ヘッダー
-            writer.writerow(
-                ["No.", "Title", "Published Date", "Author", "Category"])
+            writer.writerow(["No.", "Title", "Published Date", "Author", "Category"])
             for index, book in enumerate(
                 Book.objects.all().prefetch_related("authors", "categories"), 1
             ):
-                authors = ", ".join(
-                    [author.name for author in book.authors.all()])
+                authors = ", ".join([author.name for author in book.authors.all()])
                 categories = ", ".join(
-                    [category.name for category in book.categories.all()])
+                    [category.name for category in book.categories.all()]
+                )
 
                 # ""で囲んで表示したい場合は f'"{authors}"'
 
                 writer.writerow(
-                    [index, book.title, book.published_date, authors, categories])
+                    [index, book.title, book.published_date, authors, categories]
+                )
             return response
     return render(request, "book/book_shelf.html", {"books": books})
 
@@ -202,7 +202,7 @@ class CategoryViewSet(ModelViewSet):
     serializer_class = CategorySerializer
 
 
-@api_view(["GET", "POST", "DELETE"])
+@api_view(["GET", "POST"])
 def book_list(request):
     # GET list of tutorials, POST a new tutorial, DELETE all tutorials
     if request.method == "GET":
@@ -222,13 +222,6 @@ def book_list(request):
             book_serializer.save()
             return JsonResponse(book_serializer.data, status=status.HTTP_201_CREATED)
         return JsonResponse(book_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    elif request.method == "DELETE":
-        count = Book.objects.all().delete()
-        return JsonResponse(
-            {"message": "{} Books were deleted successfully!".format(count[0])},
-            status=status.HTTP_204_NO_CONTENT,
-        )
 
 
 @api_view(["GET", "PUT", "DELETE"])
@@ -258,7 +251,7 @@ def book_detail(request, id):
         )
 
 
-@api_view(["GET", "POST", "DELETE"])
+@api_view(["GET", "POST"])
 def author_list(request):
     # GET list of tutorials, POST a new tutorial, DELETE all tutorials
     if request.method == "GET":
@@ -279,13 +272,6 @@ def author_list(request):
             return JsonResponse(author_serializer.data, status=status.HTTP_201_CREATED)
         return JsonResponse(
             author_serializer.errors, status=status.HTTP_400_BAD_REQUEST
-        )
-
-    elif request.method == "DELETE":
-        count = Author.objects.all().delete()
-        return JsonResponse(
-            {"message": "{} Authors were deleted successfully!".format(count[0])},
-            status=status.HTTP_204_NO_CONTENT,
         )
 
 
@@ -318,7 +304,7 @@ def author_detail(request, id):
         )
 
 
-@api_view(["GET", "POST", "DELETE"])
+@api_view(["GET", "POST"])
 def category_list(request):
     # GET list of tutorials, POST a new tutorial, DELETE all tutorials
     if request.method == "GET":
@@ -341,13 +327,6 @@ def category_list(request):
             )
         return JsonResponse(
             category_serializer.errors, status=status.HTTP_400_BAD_REQUEST
-        )
-
-    elif request.method == "DELETE":
-        count = Category.objects.all().delete()
-        return JsonResponse(
-            {"message": "{} Categories were deleted successfully!".format(count[0])},
-            status=status.HTTP_204_NO_CONTENT,
         )
 
 
