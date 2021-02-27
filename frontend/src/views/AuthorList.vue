@@ -1,0 +1,3 @@
+<template>
+  <h1>Author List</h1>
+</template>
