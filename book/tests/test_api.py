@@ -8,62 +8,43 @@ from book.models import Author, Book, Category
 # 単数書籍をセットアップ
 @pytest.fixture()
 def setup_book_object():
-    Category.objects.bulk_create(
-        [Category(name="Category1"), Category(name="Category2")]
-    )
-    Author.objects.bulk_create([Author(name="Author1"), Author(name="Author2")])
-    c1 = Category.objects.get(name="Category1")
-    a1 = Author.objects.get(name="Author1")
-    a2 = Author.objects.get(name="Author2")
+    c1 = Category.objects.create(name="Category1")
+    a1 = Author.objects.create(name="Author1")
     b1 = Book(title="Book1", published_date="2006-03-28")
     b1.save()
     b1.categories.add(c1)
-    b1.authors.add(a1, a2)
+    b1.authors.add(a1)
 
 
 # ユニークなタイトルの書籍を複数セットアップ
 @pytest.fixture()
 def setup_multiple_book_objects(request):
-    Category.objects.bulk_create(
-        [Category(name="Category1"), Category(name="Category2")]
-    )
-    Author.objects.bulk_create([Author(name="Author1"), Author(name="Author2")])
-    c1 = Category.objects.get(name="Category1")
-    c2 = Category.objects.get(name="Category2")
-    a1 = Author.objects.get(name="Author1")
-    a2 = Author.objects.get(name="Author2")
+    c1 = Category.objects.create(name="Category1")
+    a1 = Author.objects.create(name="Author1")
     for i in range(request.param):
         b1 = Book(title="Book" + str(i + 1), published_date="2006-03-28")
         b1.save()
-        b1.categories.add(c1, c2)
-        b1.authors.add(a1, a2)
+        b1.categories.add(c1)
+        b1.authors.add(a1)
 
 
 # タイトルが同じ書籍を複数セットアップ
 @pytest.fixture()
 def setup_multiple_same_title_book_objects(request):
-    Category.objects.bulk_create(
-        [Category(name="Category1"), Category(name="Category2")]
-    )
-    Author.objects.bulk_create([Author(name="Author1"), Author(name="Author2")])
-    c1 = Category.objects.get(name="Category1")
-    c2 = Category.objects.get(name="Category2")
-    a1 = Author.objects.get(name="Author1")
-    a2 = Author.objects.get(name="Author2")
+    c1 = Category.objects.create(name="Category1")
+    a1 = Author.objects.create(name="Author1")
     for i in range(request.param):
         b1 = Book(title="Book", published_date="2006-03-28")
         b1.save()
-        b1.categories.add(c1, c2)
-        b1.authors.add(a1, a2)
+        b1.categories.add(c1)
+        b1.authors.add(a1)
 
 
 # 複数の書籍を一覧で取得出来ることをテスト(テストする書籍数：5, 10, 50 100)
 @pytest.mark.parametrize("setup_multiple_book_objects", [5, 10, 50, 100], indirect=True)
 def test_get_book_list_detail_api(setup_multiple_book_objects, client):
     c1_pk = Category.objects.get(name="Category1").pk
-    c2_pk = Category.objects.get(name="Category2").pk
     a1_pk = Author.objects.get(name="Author1").pk
-    a2_pk = Author.objects.get(name="Author2").pk
     response = client.get("/books/")
     get_response_status = response.status_code
     assert get_response_status == 200
@@ -77,11 +58,9 @@ def test_get_book_list_detail_api(setup_multiple_book_objects, client):
             "published_date": "2006-03-28",
             "categories": [
                 {"id": c1_pk, "name": "Category1"},
-                {"id": c2_pk, "name": "Category2"},
             ],
             "authors": [
                 {"id": a1_pk, "name": "Author1"},
-                {"id": a2_pk, "name": "Author2"},
             ],
         }
         generate_expected_data.append(x)
@@ -262,14 +241,13 @@ def test_put_book_detail_api(setup_book_object, test_input, expected, client):
 
 
 # 複数書籍から指定した書籍が取得出来ることをテスト(テストする書籍数：5, 10, 50 100)
+# 正しいIDを取得していることを確認するために同じタイトルの書籍を複数セットアップ
 @pytest.mark.parametrize(
     "setup_multiple_same_title_book_objects", [5, 10, 50, 100], indirect=True
 )
 def test_get_book_detail_api(setup_multiple_same_title_book_objects, client):
     c1_pk = Category.objects.get(name="Category1").pk
-    c2_pk = Category.objects.get(name="Category2").pk
     a1_pk = Author.objects.get(name="Author1").pk
-    a2_pk = Author.objects.get(name="Author2").pk
     response = client.get("/books/")
     get_response_status = response.status_code
     assert get_response_status == 200
@@ -286,11 +264,9 @@ def test_get_book_detail_api(setup_multiple_same_title_book_objects, client):
             "published_date": "2006-03-28",
             "categories": [
                 {"id": c1_pk, "name": "Category1"},
-                {"id": c2_pk, "name": "Category2"},
             ],
             "authors": [
                 {"id": a1_pk, "name": "Author1"},
-                {"id": a2_pk, "name": "Author2"},
             ],
         },
         separators=(",", ":"),
