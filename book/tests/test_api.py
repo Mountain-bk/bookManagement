@@ -1,47 +1,81 @@
 import json
 import random
+import factory
 
 import pytest
 from book.models import Author, Book, Category
 
 
-# 単数書籍をセットアップ
+class BookFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Book
+
+    title = factory.Sequence(lambda n: "Book%s" % n)
+    published_date = "2006-03-28"
+
+    @factory.post_generation
+    def authors(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        if extracted:
+            for author in extracted:
+                self.authors.add(author)
+
+    @factory.post_generation
+    def categories(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        if extracted:
+            for category in extracted:
+                self.categories.add(category)
+
+
+class AuthorFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Author
+        django_get_or_create = ("name",)
+
+    name = "Author1"
+
+
+class CategoryFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Category
+        django_get_or_create = ("name",)
+
+    name = "Category1"
+
+
 @pytest.fixture()
-def setup_book_object():
-    c1 = Category.objects.create(name="Category1")
-    a1 = Author.objects.create(name="Author1")
-    b1 = Book(title="Book1", published_date="2006-03-28")
-    b1.save()
-    b1.categories.add(c1)
-    b1.authors.add(a1)
+def setup_single_book_object():
+    BookFactory.create(
+        title="Book1", authors=[AuthorFactory()], categories=[CategoryFactory()]
+    )
 
 
-# ユニークなタイトルの書籍を複数セットアップ
 @pytest.fixture()
 def setup_multiple_book_objects(request):
-    c1 = Category.objects.create(name="Category1")
-    a1 = Author.objects.create(name="Author1")
     for i in range(request.param):
-        b1 = Book(title="Book" + str(i + 1), published_date="2006-03-28")
-        b1.save()
-        b1.categories.add(c1)
-        b1.authors.add(a1)
+        # ユニークなタイトルの書籍を作成
+        BookFactory.create(
+            title="Book" + str(i + 1),
+            authors=[AuthorFactory()],
+            categories=[CategoryFactory()],
+        )
 
 
-# タイトルが同じ書籍を複数セットアップ
 @pytest.fixture()
 def setup_multiple_same_title_book_objects(request):
-    c1 = Category.objects.create(name="Category1")
-    a1 = Author.objects.create(name="Author1")
     for i in range(request.param):
-        b1 = Book(title="Book", published_date="2006-03-28")
-        b1.save()
-        b1.categories.add(c1)
-        b1.authors.add(a1)
+        # タイトルが同じ書籍を作成
+        BookFactory.create(
+            title="Book", authors=[AuthorFactory()], categories=[CategoryFactory()]
+        )
 
 
-# 複数の書籍を一覧で取得出来ることをテスト(テストする書籍数：5, 10, 50 100)
-@pytest.mark.parametrize("setup_multiple_book_objects", [5, 10, 50, 100], indirect=True)
+@pytest.mark.parametrize("setup_multiple_book_objects", [5, 10, 50], indirect=True)
 def test_get_book_list_detail_api(setup_multiple_book_objects, client):
     c1_pk = Category.objects.get(name="Category1").pk
     a1_pk = Author.objects.get(name="Author1").pk
@@ -71,7 +105,6 @@ def test_get_book_list_detail_api(setup_multiple_book_objects, client):
     assert expected_data == get_response_data
 
 
-# 単数書籍の登録が出来ることをテスト
 # テストケース：半角のみ（英語）・全角のみ（日本語）・半角全角
 @pytest.mark.parametrize(
     "test_input,expected",
@@ -155,7 +188,6 @@ def test_post_book_detail_api(test_input, expected, client):
     assert expected_data == get_response_data
 
 
-# 単数書籍の編集が出来ることをテスト
 # テストケース：半角のみ（英語）・全角のみ（日本語）・半角全角
 @pytest.mark.parametrize(
     "test_input,expected",
@@ -221,7 +253,7 @@ def test_post_book_detail_api(test_input, expected, client):
         ),
     ],
 )
-def test_put_book_detail_api(setup_book_object, test_input, expected, client):
+def test_put_book_detail_api(setup_single_book_object, test_input, expected, client):
     b1_pk = Book.objects.get(title="Book1").pk
     test_input["id"] = b1_pk
     put_response_status = client.put(
@@ -240,12 +272,12 @@ def test_put_book_detail_api(setup_book_object, test_input, expected, client):
     assert expected_data == get_response_data
 
 
-# 複数書籍から指定した書籍が取得出来ることをテスト(テストする書籍数：5, 10, 50 100)
-# 正しいIDを取得していることを確認するために同じタイトルの書籍を複数セットアップ
 @pytest.mark.parametrize(
-    "setup_multiple_same_title_book_objects", [5, 10, 50, 100], indirect=True
+    "setup_multiple_same_title_book_objects", [5, 10, 50], indirect=True
 )
-def test_get_book_detail_api(setup_multiple_same_title_book_objects, client):
+def test_get_single_book_detail_from_multiple_books_api(
+    setup_multiple_same_title_book_objects, client
+):
     c1_pk = Category.objects.get(name="Category1").pk
     a1_pk = Author.objects.get(name="Author1").pk
     response = client.get("/books/")
@@ -274,8 +306,7 @@ def test_get_book_detail_api(setup_multiple_same_title_book_objects, client):
     assert expected_data == get_response_data
 
 
-# 書籍の削除が出来ているかテスト
-def test_delete_book_api(setup_book_object, client):
+def test_delete_book_api(setup_single_book_object, client):
     b1_pk = Book.objects.get(title="Book1").pk
     delete_response_status = client.delete("/books/" + str(b1_pk) + "/").status_code
     assert delete_response_status == 204
@@ -284,25 +315,19 @@ def test_delete_book_api(setup_book_object, client):
     assert expected_data == get_response_data
 
 
-# 単数著者をセットアップ
 @pytest.fixture()
-def setup_author_object():
-    author = Author(name="Author1")
-    author.save()
+def setup_single_author_object():
+    AuthorFactory.create(name="Author1")
 
 
-# ユニークな名前の著者を複数セットアップ
 @pytest.fixture()
 def setup_multiple_author_objects(request):
     for i in range(request.param):
-        author = Author(name="Author" + str(i + 1))
-        author.save()
+        # ユニークな名前の著者を作成
+        AuthorFactory.create(name="Author" + str(i + 1))
 
 
-# 複数の著者を一覧で取得出来ることをテスト(テストする著者数：5, 10, 50 100)
-@pytest.mark.parametrize(
-    "setup_multiple_author_objects", [5, 10, 50, 100], indirect=True
-)
+@pytest.mark.parametrize("setup_multiple_author_objects", [5, 10, 50], indirect=True)
 def test_get_author_list_detail_api(setup_multiple_author_objects, client):
     get_response = client.get("/authors/")
     get_response_status = get_response.status_code
@@ -323,7 +348,6 @@ def test_get_author_list_detail_api(setup_multiple_author_objects, client):
     assert expected_data == response_data
 
 
-# 単数著者の登録が出来ることをテスト
 # テストケース：半角のみ（英語）・全角のみ（日本語）・半角全角
 @pytest.mark.parametrize(
     "test_input,expected",
@@ -371,7 +395,6 @@ def test_post_author_detail_api(test_input, expected, client):
     assert expected_data == get_response_data
 
 
-# 単数著者の編集が出来ることをテスト
 # テストケース：半角のみ（英語）・全角のみ（日本語）・半角全角
 @pytest.mark.parametrize(
     "test_input,expected",
@@ -408,7 +431,9 @@ def test_post_author_detail_api(test_input, expected, client):
         ),
     ],
 )
-def test_put_author_detail_api(setup_author_object, test_input, expected, client):
+def test_put_author_detail_api(
+    setup_single_author_object, test_input, expected, client
+):
     a1_pk = Author.objects.get(name="Author1").pk
     test_input["id"] = a1_pk
     put_response_status = client.put(
@@ -425,11 +450,10 @@ def test_put_author_detail_api(setup_author_object, test_input, expected, client
     assert expected_data == get_response_data
 
 
-# 複数著者から指定した著者が取得出来ることをテスト(テストする著者数：5, 10, 50 100)
-@pytest.mark.parametrize(
-    "setup_multiple_author_objects", [5, 10, 50, 100], indirect=True
-)
-def test_get_author_detail_api(setup_multiple_author_objects, client):
+@pytest.mark.parametrize("setup_multiple_author_objects", [5, 10, 50], indirect=True)
+def test_get_single_author_detail_from_author_list_api(
+    setup_multiple_author_objects, client
+):
     response = client.get("/authors/")
     get_response_status = response.status_code
     assert get_response_status == 200
@@ -447,8 +471,7 @@ def test_get_author_detail_api(setup_multiple_author_objects, client):
     assert expected_data == get_response_data
 
 
-# 著者の削除が出来ているかテスト
-def test_delete_author_api(setup_author_object, client):
+def test_delete_author_api(setup_single_author_object, client):
     a1_pk = Author.objects.get(name="Author1").pk
     delete_response_status = client.delete("/authors/" + str(a1_pk) + "/").status_code
     assert delete_response_status == 204
@@ -457,25 +480,19 @@ def test_delete_author_api(setup_author_object, client):
     assert expected_data == get_response_data
 
 
-# 単数カテゴリーをセットアップ
 @pytest.fixture()
-def setup_category_object():
-    category = Category(name="Category1")
-    category.save()
+def setup_single_category_object():
+    CategoryFactory.create(name="Category1")
 
 
-# ユニークな名前のカテゴリーを複数セットアップ
 @pytest.fixture()
 def setup_multiple_category_objects(request):
     for i in range(request.param):
-        category = Category(name="Category" + str(i + 1))
-        category.save()
+        # ユニークな名前のカテゴリーを作成
+        CategoryFactory.create(name="Category" + str(i + 1))
 
 
-# 複数のカテゴリーを一覧で取得出来ることをテスト(テストするカテゴリー数：5, 10, 50 100)
-@pytest.mark.parametrize(
-    "setup_multiple_category_objects", [5, 10, 50, 100], indirect=True
-)
+@pytest.mark.parametrize("setup_multiple_category_objects", [5, 10, 50], indirect=True)
 def test_get_category_list_detail_api(setup_multiple_category_objects, client):
     get_response = client.get("/categories/")
     get_response_status = get_response.status_code
@@ -496,7 +513,6 @@ def test_get_category_list_detail_api(setup_multiple_category_objects, client):
     assert expected_data == response_data
 
 
-# 単数カテゴリーの登録が出来ることをテスト
 # テストケース：半角のみ（英語）・全角のみ（日本語）・半角全角
 @pytest.mark.parametrize(
     "test_input,expected",
@@ -545,7 +561,6 @@ def test_post_author_detail_api(test_input, expected, client):
     assert expected_data == get_response_data
 
 
-# 単数カテゴリーの編集が出来ることをテスト
 # テストケース：半角のみ（英語）・全角のみ（日本語）・半角全角
 @pytest.mark.parametrize(
     "test_input,expected",
@@ -582,7 +597,9 @@ def test_post_author_detail_api(test_input, expected, client):
         ),
     ],
 )
-def test_put_category_detail_api(setup_category_object, test_input, expected, client):
+def test_put_category_detail_api(
+    setup_single_category_object, test_input, expected, client
+):
     c1_pk = Category.objects.get(name="Category1").pk
     test_input["id"] = c1_pk
     put_response_status = client.put(
@@ -599,11 +616,10 @@ def test_put_category_detail_api(setup_category_object, test_input, expected, cl
     assert expected_data == get_response_data
 
 
-# 複数カテゴリーから指定したカテゴリーが取得出来ることをテスト(テストするカテゴリー数：5, 10, 50 100)
-@pytest.mark.parametrize(
-    "setup_multiple_category_objects", [5, 10, 50, 100], indirect=True
-)
-def test_get_category_detail_api(setup_multiple_category_objects, client):
+@pytest.mark.parametrize("setup_multiple_category_objects", [5, 10, 50], indirect=True)
+def test_get_single_category_detail_from_category_list_api(
+    setup_multiple_category_objects, client
+):
     response = client.get("/categories/")
     get_response_status = response.status_code
     assert get_response_status == 200
@@ -622,7 +638,7 @@ def test_get_category_detail_api(setup_multiple_category_objects, client):
 
 
 # カテゴリーの削除が出来ているかテスト
-def test_delete_category_api(setup_category_object, client):
+def test_delete_category_api(setup_single_category_object, client):
     c1_pk = Category.objects.get(name="Category1").pk
     delete_response_status = client.delete(
         "/categories/" + str(c1_pk) + "/"
